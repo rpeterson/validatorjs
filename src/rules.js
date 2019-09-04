@@ -15,6 +15,8 @@ function isValidDate(inDate) {
     if (pos > 0 && pos <= 6) {
       inDate = inDate.replace(/\./g, '-');
     }
+
+    // if date is mm-dd-yyyy or yyyy-mm-dd
     if (inDate.length === 10) {
       return dateTools.isValid(dateTools.parseISO(inDate));
     }
