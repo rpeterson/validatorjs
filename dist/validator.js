@@ -3915,8 +3915,8 @@ function eachWeekendOfInterval(interval) {
   var weekends = [];
   var index = 0;
 
-  while (index++ < dateInterval.length) {
-    var date = dateInterval[index];
+  while (index < dateInterval.length) {
+    var date = dateInterval[index++];
 
     if ((0, _index3.default)(date)) {
       weekends.push(date);
