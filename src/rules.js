@@ -1,4 +1,5 @@
-var dateTools = require('date-fns');
+var isValid = require('date-fns/isValid');
+var parseISO = require('date-fns/parseISO');
 
 function leapYear(year) {
   return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
@@ -18,7 +19,7 @@ function isValidDate(inDate) {
 
     // if date is mm-dd-yyyy or yyyy-mm-dd
     if (inDate.length === 10) {
-      return dateTools.isValid(dateTools.parseISO(inDate));
+      return isValid(parseISO(inDate));
     }
   }
 
