@@ -1,6 +1,6 @@
 # validatorjs
 
-[Version 3.19] -- 2019.11.27
+[Version 3.18.1] -- 2019.11.27
 
 ## Fixed
 
@@ -13,7 +13,6 @@
 - Reduceds bundle size requiring date-fns functions (parseISO and isValid) instead of whole date-fns library
 - Updated to use date-fns 2.1
 - Preparing for rollup / webpack bundling
--
 
 [Version 3.17.1] -- 2019-09.05
 
