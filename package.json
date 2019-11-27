@@ -37,11 +37,12 @@
     "laravel",
     "laravel-validator-for-js"
   ],
-  "dependencies": {},
+  "dependencies": {
+    "date-fns": "2.1.0"
+  },
   "devDependencies": {
     "browserify": "^13.0.1",
     "chai": "3.5.0",
-    "date-fns": "2.1.0",
     "eslint": "5.8.0",
     "grun": "0.2.0",
     "grunt": "1.0.4",

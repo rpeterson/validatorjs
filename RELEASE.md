@@ -1,5 +1,11 @@
 # validatorjs
 
+[Version 3.19] -- 2019.11.27
+
+## Fixed
+
+- Fixed `date-fns` dependency regression (https://github.com/skaterdav85/validatorjs/issues/350)
+
 [Version 3.18] -- 2019.11.24
 
 ## Changed
@@ -8,6 +14,7 @@
 - Updated to use date-fns 2.1
 - Preparing for rollup / webpack bundling
 -
+
 [Version 3.17.1] -- 2019-09.05
 
 ## Changed
