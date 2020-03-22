@@ -1,5 +1,15 @@
 # validatorjs
 
+[Version 3.19] -- 2019.12.xx
+
+## Added
+
+## Fixed
+
+Issues
+- Added `hex` attribute language files which were missing
+	https://github.com/skaterdav85/validatorjs/pull/240
+
 [Version 3.18.1] -- 2019.11.27
 
 ## Fixed

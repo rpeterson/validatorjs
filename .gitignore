@@ -8,3 +8,4 @@ NOTES.md
 npm-debug.log
 sandbox/
 spec/checklist.md
+*.taskpaper

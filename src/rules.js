@@ -1,5 +1,5 @@
-var isValid = require('date-fns/isValid');
-var parseISO = require('date-fns/parseISO');
+var isValid = require("date-fns/isValid");
+var parseISO = require("date-fns/parseISO");
 
 function leapYear(year) {
   return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
@@ -11,10 +11,10 @@ function isValidDate(inDate) {
   }
 
   // reformat if supplied as mm.dd.yyyy (period delimiter)
-  if (typeof inDate === 'string') {
-    var pos = inDate.indexOf('.');
+  if (typeof inDate === "string") {
+    var pos = inDate.indexOf(".");
     if (pos > 0 && pos <= 6) {
-      inDate = inDate.replace(/\./g, '-');
+      inDate = inDate.replace(/\./g, "-");
     }
 
     // if date is mm-dd-yyyy or yyyy-mm-dd
@@ -57,14 +57,14 @@ var rules = {
       return false;
     }
 
-    str = String(val).replace(/\s/g, '');
+    str = String(val).replace(/\s/g, "");
     return str.length > 0 ? true : false;
   },
 
   required_if: function(val, req, attribute) {
     req = this.getParameters();
     if (this.validator._objectPath(this.validator.input, req[0]) === req[1]) {
-      return this.validator.getRule('required').validate(val);
+      return this.validator.getRule("required").validate(val);
     }
 
     return true;
@@ -73,7 +73,7 @@ var rules = {
   required_unless: function(val, req, attribute) {
     req = this.getParameters();
     if (this.validator._objectPath(this.validator.input, req[0]) !== req[1]) {
-      return this.validator.getRule('required').validate(val);
+      return this.validator.getRule("required").validate(val);
     }
 
     return true;
@@ -81,7 +81,7 @@ var rules = {
 
   required_with: function(val, req, attribute) {
     if (this.validator._objectPath(this.validator.input, req)) {
-      return this.validator.getRule('required').validate(val);
+      return this.validator.getRule("required").validate(val);
     }
 
     return true;
@@ -96,7 +96,7 @@ var rules = {
       }
     }
 
-    return this.validator.getRule('required').validate(val);
+    return this.validator.getRule("required").validate(val);
   },
 
   required_without: function(val, req, attribute) {
@@ -104,7 +104,7 @@ var rules = {
       return true;
     }
 
-    return this.validator.getRule('required').validate(val);
+    return this.validator.getRule("required").validate(val);
   },
 
   required_without_all: function(val, req, attribute) {
@@ -116,7 +116,7 @@ var rules = {
       }
     }
 
-    return this.validator.getRule('required').validate(val);
+    return this.validator.getRule("required").validate(val);
   },
 
   boolean: function(val) {
@@ -125,10 +125,10 @@ var rules = {
       val === false ||
       val === 0 ||
       val === 1 ||
-      val === '0' ||
-      val === '1' ||
-      val === 'true' ||
-      val === 'false'
+      val === "0" ||
+      val === "1" ||
+      val === "true" ||
+      val === "false"
     );
   },
 
@@ -147,7 +147,7 @@ var rules = {
   },
 
   string: function(val, req, attribute) {
-    return typeof val === 'string';
+    return typeof val === "string";
   },
 
   sometimes: function(val) {
@@ -179,7 +179,9 @@ var rules = {
   },
 
   email: function(val) {
-    var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    // Added umlaut support https://github.com/skaterdav85/validatorjs/issues/308
+    // var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    var re = /^((?:[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]|[^\u0000-\u007F])+@(?:[a-zA-Z0-9]|[^\u0000-\u007F])(?:(?:[a-zA-Z0-9-]|[^\u0000-\u007F]){0,61}(?:[a-zA-Z0-9]|[^\u0000-\u007F]))?(?:\.(?:[a-zA-Z0-9]|[^\u0000-\u007F])(?:(?:[a-zA-Z0-9-]|[^\u0000-\u007F]){0,61}(?:[a-zA-Z0-9]|[^\u0000-\u007F]))?))*$/;
     return re.test(val);
   },
 
@@ -188,7 +190,7 @@ var rules = {
 
     num = Number(val); // tries to convert value to a number. useful if value is coming from form element
 
-    if (typeof num === 'number' && !isNaN(num) && typeof val !== 'boolean') {
+    if (typeof num === "number" && !isNaN(num) && typeof val !== "boolean") {
       return true;
     } else {
       return false;
@@ -248,7 +250,7 @@ var rules = {
       var localValue = val;
 
       for (i = 0; i < list.length; i++) {
-        if (typeof list[i] === 'string') {
+        if (typeof list[i] === "string") {
           localValue = String(val);
         }
 
@@ -279,7 +281,7 @@ var rules = {
     for (var i = 0; i < len; i++) {
       var localValue = val;
 
-      if (typeof list[i] === 'string') {
+      if (typeof list[i] === "string") {
         localValue = String(val);
       }
 
@@ -293,7 +295,7 @@ var rules = {
   },
 
   accepted: function(val) {
-    if (val === 'on' || val === 'yes' || val === 1 || val === '1' || val === true) {
+    if (val === "on" || val === "yes" || val === 1 || val === "1" || val === true) {
       return true;
     }
 
@@ -301,7 +303,7 @@ var rules = {
   },
 
   confirmed: function(val, req, key) {
-    var confirmedKey = key + '_confirmation';
+    var confirmedKey = key + "_confirmation";
 
     if (this.validator.input[confirmedKey] === val) {
       return true;
@@ -315,7 +317,7 @@ var rules = {
   },
 
   digits: function(val, req) {
-    var numericRule = this.validator.getRule('numeric');
+    var numericRule = this.validator.getRule("numeric");
     if (numericRule.validate(val) && String(val).length === parseInt(req)) {
       return true;
     }
@@ -324,7 +326,7 @@ var rules = {
   },
 
   digits_between: function(val) {
-    var numericRule = this.validator.getRule('numeric');
+    var numericRule = this.validator.getRule("numeric");
     var req = this.getParameters();
     var valueDigitsCount = String(val).length;
     var min = parseFloat(req[0], 10);
@@ -340,8 +342,8 @@ var rules = {
   regex: function(val, req) {
     var mod = /[g|i|m]{1,3}$/;
     var flag = req.match(mod);
-    flag = flag ? flag[0] : '';
-    req = req.replace(mod, '').slice(1, -1);
+    flag = flag ? flag[0] : "";
+    req = req.replace(mod, "").slice(1, -1);
     req = new RegExp(req, flag);
     return !!req.test(val);
   },
@@ -351,7 +353,7 @@ var rules = {
   },
 
   present: function(val) {
-    return typeof val !== 'undefined';
+    return typeof val !== "undefined";
   },
 
   after: function(val, req) {
@@ -432,7 +434,7 @@ var rules = {
 };
 
 var missedRuleValidator = function() {
-  throw new Error('Validator `' + this.name + '` is not defined!');
+  throw new Error("Validator `" + this.name + "` is not defined!");
 };
 var missedRuleMessage;
 
@@ -457,7 +459,7 @@ Rule.prototype = {
   validate: function(inputValue, ruleValue, attribute, callback) {
     var _this = this;
     this._setValidatingData(attribute, inputValue, ruleValue);
-    if (typeof callback === 'function') {
+    if (typeof callback === "function") {
       this.callback = callback;
       var handleResponse = function(passes, message) {
         _this.response(passes, message);
@@ -509,11 +511,11 @@ Rule.prototype = {
   getParameters: function() {
     var value = [];
 
-    if (typeof this.ruleValue === 'string') {
-      value = this.ruleValue.split(',');
+    if (typeof this.ruleValue === "string") {
+      value = this.ruleValue.split(",");
     }
 
-    if (typeof this.ruleValue === 'number') {
+    if (typeof this.ruleValue === "number") {
       value.push(this.ruleValue);
     }
 
@@ -536,7 +538,7 @@ Rule.prototype = {
       return value.length;
     }
 
-    if (typeof value === 'number') {
+    if (typeof value === "number") {
       return value;
     }
 
@@ -553,11 +555,11 @@ Rule.prototype = {
    * @return {string}
    */
   _getValueType: function() {
-    if (typeof this.inputValue === 'number' || this.validator._hasNumericRule(this.attribute)) {
-      return 'numeric';
+    if (typeof this.inputValue === "number" || this.validator._hasNumericRule(this.attribute)) {
+      return "numeric";
     }
 
-    return 'string';
+    return "string";
   },
 
   /**
@@ -589,7 +591,7 @@ Rule.prototype = {
    * @return {boolean}
    */
   isMissed: function() {
-    return typeof this.fn !== 'function';
+    return typeof this.fn !== "function";
   },
 
   get customMessage() {
@@ -611,15 +613,15 @@ var manager = {
    * @type {Array}
    */
   implicitRules: [
-    'required',
-    'required_if',
-    'required_unless',
-    'required_with',
-    'required_with_all',
-    'required_without',
-    'required_without_all',
-    'accepted',
-    'present'
+    "required",
+    "required_if",
+    "required_unless",
+    "required_with",
+    "required_with_all",
+    "required_without",
+    "required_without_all",
+    "accepted",
+    "present"
   ],
 
   /**
