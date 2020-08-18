@@ -431,7 +431,95 @@ var rules = {
 
   hex: function(val) {
     return /^[0-9a-f]+$/i.test(val);
+  },
+
+  ipv4: function (val, req, attribute) {
+    if (typeof val != 'string')
+      return false;
+
+    // regex to check that each octet is valid
+    var er = /^[0-9]+$/;
+    // ipv4 octets are delimited by dot
+    octets = val.split('.');
+    // check 1: ipv4 address should contains 4 octets
+    if (octets.length != 4)
+      return false;
+
+    for (let i = 0; i < octets.length; i++) {
+      const element = octets[i];
+      // check 2: each octet should be integer bigger than 0
+      if (!er.test(element))
+        return false;
+
+      // check 3: each octet value should be less than 256
+      var octetValue = parseInt(element);
+      if (octetValue >= 256)
+        return false;
+    }
+
+    // if all checks passed, we know it's valid IPv4 address!
+    return true;
+  },
+
+  ipv6: function (val, req, attribute) {
+    if (typeof val != 'string')
+      return false;
+
+    // regex to check that each hextet is valid
+    var er = /^[0-9a-f]+$/;
+    // ipv6 hextets are delimited by colon
+    hextets = val.split(':');
+
+    // check 1: ipv6 should contain only one consecutive colons
+    colons = val.match(/::/);
+    if (colons != null && val.match(/::/g).length > 1)
+      return false;
+
+    // check 2: ipv6 should not be ending or starting with colon
+    //          edge case: not with consecutive colons
+    if (val[0] == ':' && (colons == null || (colons != null && colons.index != 0)))
+      return false;
+    if (val[val.length - 1] == ':' && (colons == null || (colons != null && colons.index != val.length - 2)))
+      return false;
+
+    // check 3: ipv6 should contain no less than 3 sector
+    //         minimum ipv6 addres - ::1
+    if (3 > hextets.length)
+      return false;
+
+    // check 4: ipv6 should contain no more than 8 sectors
+    //         only 1 edge case: when first or last sector is ommited
+    var isEdgeCase = (hextets.length == 9 && colons != null && (colons.index == 0 || colons.index == val.length - 2));
+    if (hextets.length > 8 && !isEdgeCase)
+      return false;
+
+    // check 5: ipv6 should contain exactly one consecutive colons if it has less than 8 sectors
+    if (hextets.length != 8 && colons == null)
+      return false;
+
+    for (let i = 0; i < hextets.length; i++) {
+      const element = hextets[i];
+
+      if (element.length == 0)
+        continue;
+
+      // check 6: all of hextets should contain numbers from 0 to f (in hexadecimal)
+      if (!er.test(element))
+        return false;
+
+      // check 7: all of hextet values should be less then ffff (in hexadeimal)
+      //          checking using length of hextet. lowest invalid value's length is 5.
+      //          so all valid hextets are length of 4 or less
+      if (element.length > 4)
+        return false;
+    }
+    return true;
+  },
+
+  ip: function (val, req, attribute) {
+    return rules['ipv4'](val, req, attribute) || rules['ipv6'](val, req, attribute);
   }
+
 };
 
 var missedRuleValidator = function() {
