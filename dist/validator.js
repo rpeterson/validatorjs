@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 /*! validatorjs - 2019-12-24 */
+=======
+/*! validatorjs - v3.17.0 -  - 2020-08-18 */
+>>>>>>> 1610bf19c7eb7e5ead4d0d38308f5cffe2b12fe1
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.Validator = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 "use strict";
 
@@ -193,6 +197,7 @@ var timezoneRegex = /^([+-])(\d{2})(?::?(\d{2}))?$/;
  *
  * - `parseISO` now doesn't fall back to `new Date` constructor
  *   if it fails to parse a string argument. Instead, it returns `Invalid Date`.
+<<<<<<< HEAD
  *
  * @param {String} argument - the value to convert
  * @param {Object} [options] - an object with options.
@@ -201,6 +206,16 @@ var timezoneRegex = /^([+-])(\d{2})(?::?(\d{2}))?$/;
  * @throws {TypeError} 1 argument required
  * @throws {RangeError} `options.additionalDigits` must be 0, 1 or 2
  *
+=======
+ *
+ * @param {String} argument - the value to convert
+ * @param {Object} [options] - an object with options.
+ * @param {0|1|2} [options.additionalDigits=2] - the additional number of digits in the extended year format
+ * @returns {Date} the parsed date in the local time zone
+ * @throws {TypeError} 1 argument required
+ * @throws {RangeError} `options.additionalDigits` must be 0, 1 or 2
+ *
+>>>>>>> 1610bf19c7eb7e5ead4d0d38308f5cffe2b12fe1
  * @example
  * // Convert string '2014-02-11T11:30:30' to date:
  * var result = parseISO('2014-02-11T11:30:30')
@@ -1145,8 +1160,13 @@ Messages.prototype = {
 module.exports = Messages;
 
 },{"./attributes":7}],12:[function(require,module,exports){
+<<<<<<< HEAD
 var isValid = require("date-fns/isValid");
 var parseISO = require("date-fns/parseISO");
+=======
+var isDateValid = require('date-fns/isValid');
+var parseISO = require('date-fns/parseISO');
+>>>>>>> 1610bf19c7eb7e5ead4d0d38308f5cffe2b12fe1
 
 function leapYear(year) {
   return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
@@ -1166,7 +1186,11 @@ function isValidDate(inDate) {
 
     // if date is mm-dd-yyyy or yyyy-mm-dd
     if (inDate.length === 10) {
+<<<<<<< HEAD
       return isValid(parseISO(inDate));
+=======
+      return isDateValid(parseISO(inDate));
+>>>>>>> 1610bf19c7eb7e5ead4d0d38308f5cffe2b12fe1
     }
   }
 
@@ -1464,8 +1488,13 @@ var rules = {
   },
 
   digits: function(val, req) {
+<<<<<<< HEAD
     var numericRule = this.validator.getRule("numeric");
     if (numericRule.validate(val) && String(val).length === parseInt(req)) {
+=======
+    var numericRule = this.validator.getRule('numeric');
+    if (numericRule.validate(val) && String(val.trim()).length === parseInt(req)) {
+>>>>>>> 1610bf19c7eb7e5ead4d0d38308f5cffe2b12fe1
       return true;
     }
 
@@ -2164,7 +2193,7 @@ Validator.prototype = {
       if(Array.isArray(path2)){
         path2 = path2[0];
       }
-      pos = path2.indexOf('*');
+      const pos = path2.indexOf('*');
       if (pos === -1) {
         return path2;
       }

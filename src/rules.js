@@ -318,8 +318,8 @@ var rules = {
   },
 
   digits: function(val, req) {
-    var numericRule = this.validator.getRule("numeric");
-    if (numericRule.validate(val) && String(val).length === parseInt(req)) {
+    var numericRule = this.validator.getRule('numeric');
+    if (numericRule.validate(val) && String(val.trim()).length === parseInt(req)) {
       return true;
     }
 
