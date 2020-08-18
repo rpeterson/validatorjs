@@ -7,13 +7,10 @@ This library was inspired by the [Laravel framework's Validator](http://laravel.
 
 ## Important Notice - New Source Repository
 
-
 Please visit the following [repository](https://github.com/mikeerickson/validatorjs) as it will be current moving forward as we are the sole maintainers of this project
 
+## Why use validatorjs
 
-## Why use validatorjs?
-
-* Not dependent on any libraries.
 * Works in both the browser and Node.
 * Readable and declarative validation rules.
 * Error messages with multilingual support.
@@ -212,7 +209,6 @@ The field under validation must be an array.
 
 The field under validation must be before the given date.
 
-
 #### before_or_equal:date
 
 The field under validation must be before or equal to the given date.
@@ -250,6 +246,7 @@ The given field must be different than the field under validation.
 The field under validation must be formatted as an e-mail address.
 
 #### hex
+
 The field under validation should be a hexadecimal format. Useful in combination with other rules, like `hex|size:6` for hex color code validation.
 
 #### in:foo,bar,...
@@ -281,6 +278,7 @@ The field under validation must not be included in the given list of values.
 Validate that an attribute is numeric. The string representation of a number will pass.
 
 #### present
+
 The field under validation must be present in the input data but can be empty.
 
 #### required
@@ -407,9 +405,9 @@ Then call your validator using `checkAsync` passing `fails` and `passes` callbac
 
 ```js
 let validator = new Validator({
-	username: 'test123'
+  username: 'test123'
 }, {
-	username: 'required|min:3|username_available'
+  username: 'required|min:3|username_available'
 });
 
 function passes() {

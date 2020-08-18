@@ -1,6 +1,6 @@
 # validatorjs
 
-[Version 3.19] -- 2019.12.xx
+[Version 3.19] -- 20202.08.14
 
 ## Added
 
