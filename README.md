@@ -249,6 +249,10 @@ The field under validation must be formatted as an e-mail address.
 
 The field under validation should be a hexadecimal format. Useful in combination with other rules, like `hex|size:6` for hex color code validation.
 
+#### ip
+
+The field under validation should be a valid ip address format. Supports IP4 and IP6
+
 #### in:foo,bar,...
 
 The field under validation must be included in the given list of values. The field can be an array or string.
@@ -596,7 +600,7 @@ Validator.setMessages('en', messages);
 
 ### License
 
-Copyright &copy; 2012-2019 David Tang
+Copyright &copy; 2012-2020 David Tang
 Released under the MIT license
 
 ### Credits
