@@ -1,6 +1,6 @@
 const { Validator, expect } = require("./setup.js");
 
-describe("email validation rule", function() {
+describe.only("email validation rule", function() {
   it("should pass with the email address: johndoe@gmail.com", function() {
     const validator = new Validator({ email: "johndoe@gmail.com" }, { email: "email" });
     expect(validator.passes()).to.be.true;
@@ -43,4 +43,15 @@ describe("email validation rule", function() {
     const validator = new Validator({ email: "john.doe@jänt.de" }, { email: "email" });
     expect(validator.passes()).to.be.true;
   });
+
+  it("should pass with the email addresses containing country designation (uk)", function() {
+    const validator = new Validator({ email: "johndoe@gmail.com.uk" }, { email: "email" });
+    expect(validator.passes()).to.be.true;
+  });
+
+  it("should pass with the email addresses containing country designation (au)", function() {
+    const validator = new Validator({ email: "johndoe@gmail.com.au" }, { email: "email" });
+    expect(validator.passes()).to.be.true;
+  });
+
 });

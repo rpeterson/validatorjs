@@ -1,6 +1,12 @@
 # validatorjs
 
-[Version 3.19] -- 20202.08.14
+[Version 3.19.1] -- 2020.08.24
+
+## Fixed
+
+https://github.com/skaterdav85/validatorjs/issues/381
+
+[Version 3.19] -- 2020.08.14
 
 ## Added
 
