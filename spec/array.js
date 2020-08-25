@@ -18,4 +18,15 @@ describe("array rule", function() {
     expect(validator.fails()).to.be.true;
     expect(validator.passes()).to.be.false;
   });
+
+  it("should have a minimum number of array items ", function() {
+    const validator = new Validator({
+      names: []
+    }, {
+      'names': 'array|min:1'
+    });
+    expect(validator.fails()).to.be.true;
+    expect(validator.passes()).to.be.false;
+  });
+
 });

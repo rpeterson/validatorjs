@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-/*! validatorjs - 2019-12-24 */
-=======
-/*! validatorjs - v3.17.0 -  - 2020-08-18 */
->>>>>>> 1610bf19c7eb7e5ead4d0d38308f5cffe2b12fe1
+/*! validatorjs - 2020-08-25 */
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.Validator = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 "use strict";
 
@@ -197,7 +193,6 @@ var timezoneRegex = /^([+-])(\d{2})(?::?(\d{2}))?$/;
  *
  * - `parseISO` now doesn't fall back to `new Date` constructor
  *   if it fails to parse a string argument. Instead, it returns `Invalid Date`.
-<<<<<<< HEAD
  *
  * @param {String} argument - the value to convert
  * @param {Object} [options] - an object with options.
@@ -206,16 +201,6 @@ var timezoneRegex = /^([+-])(\d{2})(?::?(\d{2}))?$/;
  * @throws {TypeError} 1 argument required
  * @throws {RangeError} `options.additionalDigits` must be 0, 1 or 2
  *
-=======
- *
- * @param {String} argument - the value to convert
- * @param {Object} [options] - an object with options.
- * @param {0|1|2} [options.additionalDigits=2] - the additional number of digits in the extended year format
- * @returns {Date} the parsed date in the local time zone
- * @throws {TypeError} 1 argument required
- * @throws {RangeError} `options.additionalDigits` must be 0, 1 or 2
- *
->>>>>>> 1610bf19c7eb7e5ead4d0d38308f5cffe2b12fe1
  * @example
  * // Convert string '2014-02-11T11:30:30' to date:
  * var result = parseISO('2014-02-11T11:30:30')
@@ -1160,13 +1145,9 @@ Messages.prototype = {
 module.exports = Messages;
 
 },{"./attributes":7}],12:[function(require,module,exports){
-<<<<<<< HEAD
 var isValid = require("date-fns/isValid");
 var parseISO = require("date-fns/parseISO");
-=======
-var isDateValid = require('date-fns/isValid');
-var parseISO = require('date-fns/parseISO');
->>>>>>> 1610bf19c7eb7e5ead4d0d38308f5cffe2b12fe1
+
 
 function leapYear(year) {
   return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
@@ -1186,11 +1167,7 @@ function isValidDate(inDate) {
 
     // if date is mm-dd-yyyy or yyyy-mm-dd
     if (inDate.length === 10) {
-<<<<<<< HEAD
       return isValid(parseISO(inDate));
-=======
-      return isDateValid(parseISO(inDate));
->>>>>>> 1610bf19c7eb7e5ead4d0d38308f5cffe2b12fe1
     }
   }
 
@@ -1328,7 +1305,7 @@ var rules = {
   /**
    * Compares the size of strings or the value of numbers if there is a truthy value
    */
-  min: function(val, req, attribute) {
+  min: function (val, req, attribute) {
     var size = this.getSize();
     return size >= req;
   },
@@ -1351,8 +1328,10 @@ var rules = {
 
   email: function(val) {
     // Added umlaut support https://github.com/skaterdav85/validatorjs/issues/308
-    // var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    var re = /^((?:[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]|[^\u0000-\u007F])+@(?:[a-zA-Z0-9]|[^\u0000-\u007F])(?:(?:[a-zA-Z0-9-]|[^\u0000-\u007F]){0,61}(?:[a-zA-Z0-9]|[^\u0000-\u007F]))?(?:\.(?:[a-zA-Z0-9]|[^\u0000-\u007F])(?:(?:[a-zA-Z0-9-]|[^\u0000-\u007F]){0,61}(?:[a-zA-Z0-9]|[^\u0000-\u007F]))?))*$/;
+    var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    if (!re.test(val)) {
+      re = /^((?:[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]|[^\u0000-\u007F])+@(?:[a-zA-Z0-9]|[^\u0000-\u007F])(?:(?:[a-zA-Z0-9-]|[^\u0000-\u007F]){0,61}(?:[a-zA-Z0-9]|[^\u0000-\u007F]))?(?:\.(?:[a-zA-Z0-9]|[^\u0000-\u007F])(?:(?:[a-zA-Z0-9-]|[^\u0000-\u007F]){0,61}(?:[a-zA-Z0-9]|[^\u0000-\u007F]))?))*$/;
+    }
     return re.test(val);
   },
 
@@ -1368,7 +1347,7 @@ var rules = {
     }
   },
 
-  array: function(val) {
+  array: function (val) {
     return val instanceof Array;
   },
 
@@ -1488,13 +1467,8 @@ var rules = {
   },
 
   digits: function(val, req) {
-<<<<<<< HEAD
-    var numericRule = this.validator.getRule("numeric");
-    if (numericRule.validate(val) && String(val).length === parseInt(req)) {
-=======
     var numericRule = this.validator.getRule('numeric');
     if (numericRule.validate(val) && String(val.trim()).length === parseInt(req)) {
->>>>>>> 1610bf19c7eb7e5ead4d0d38308f5cffe2b12fe1
       return true;
     }
 
@@ -1606,7 +1580,95 @@ var rules = {
 
   hex: function(val) {
     return /^[0-9a-f]+$/i.test(val);
+  },
+
+  ipv4: function (val, req, attribute) {
+    if (typeof val != 'string')
+      return false;
+
+    // regex to check that each octet is valid
+    var er = /^[0-9]+$/;
+    // ipv4 octets are delimited by dot
+    octets = val.split('.');
+    // check 1: ipv4 address should contains 4 octets
+    if (octets.length != 4)
+      return false;
+
+    for (let i = 0; i < octets.length; i++) {
+      const element = octets[i];
+      // check 2: each octet should be integer bigger than 0
+      if (!er.test(element))
+        return false;
+
+      // check 3: each octet value should be less than 256
+      var octetValue = parseInt(element);
+      if (octetValue >= 256)
+        return false;
+    }
+
+    // if all checks passed, we know it's valid IPv4 address!
+    return true;
+  },
+
+  ipv6: function (val, req, attribute) {
+    if (typeof val != 'string')
+      return false;
+
+    // regex to check that each hextet is valid
+    var er = /^[0-9a-f]+$/;
+    // ipv6 hextets are delimited by colon
+    hextets = val.split(':');
+
+    // check 1: ipv6 should contain only one consecutive colons
+    colons = val.match(/::/);
+    if (colons != null && val.match(/::/g).length > 1)
+      return false;
+
+    // check 2: ipv6 should not be ending or starting with colon
+    //          edge case: not with consecutive colons
+    if (val[0] == ':' && (colons == null || (colons != null && colons.index != 0)))
+      return false;
+    if (val[val.length - 1] == ':' && (colons == null || (colons != null && colons.index != val.length - 2)))
+      return false;
+
+    // check 3: ipv6 should contain no less than 3 sector
+    //         minimum ipv6 addres - ::1
+    if (3 > hextets.length)
+      return false;
+
+    // check 4: ipv6 should contain no more than 8 sectors
+    //         only 1 edge case: when first or last sector is ommited
+    var isEdgeCase = (hextets.length == 9 && colons != null && (colons.index == 0 || colons.index == val.length - 2));
+    if (hextets.length > 8 && !isEdgeCase)
+      return false;
+
+    // check 5: ipv6 should contain exactly one consecutive colons if it has less than 8 sectors
+    if (hextets.length != 8 && colons == null)
+      return false;
+
+    for (let i = 0; i < hextets.length; i++) {
+      const element = hextets[i];
+
+      if (element.length == 0)
+        continue;
+
+      // check 6: all of hextets should contain numbers from 0 to f (in hexadecimal)
+      if (!er.test(element))
+        return false;
+
+      // check 7: all of hextet values should be less then ffff (in hexadeimal)
+      //          checking using length of hextet. lowest invalid value's length is 5.
+      //          so all valid hextets are length of 4 or less
+      if (element.length > 4)
+        return false;
+    }
+    return true;
+  },
+
+  ip: function (val, req, attribute) {
+    return rules['ipv4'](val, req, attribute) || rules['ipv6'](val, req, attribute);
   }
+
 };
 
 var missedRuleValidator = function() {
@@ -2309,6 +2371,9 @@ Validator.prototype = {
    * @return {boolean}
    */
   _isValidatable: function (rule, value) {
+    if (Array.isArray(value)) {
+      return true;
+    }
     if (Rules.isImplicit(rule.name)) {
       return true;
     }
@@ -2492,7 +2557,7 @@ Validator.stopOnError = function (attributes) {
  * @param  {string}   message
  * @return {void}
  */
-Validator.register = function (name, fn, message) {
+Validator.register = function (name, fn, message, fnReplacement) {
   var lang = Validator.getDefaultLang();
   Rules.register(name, fn);
   Lang._setRuleMessage(lang, name, message);
@@ -2504,9 +2569,10 @@ Validator.register = function (name, fn, message) {
  * @param  {string}   name
  * @param  {function} fn
  * @param  {string}   message
+ * @param  {function} fnReplacement
  * @return {void}
  */
-Validator.registerImplicit = function (name, fn, message) {
+Validator.registerImplicit = function (name, fn, message, fnReplacement) {
   var lang = Validator.getDefaultLang();
   Rules.registerImplicit(name, fn);
   Lang._setRuleMessage(lang, name, message);
@@ -2520,7 +2586,7 @@ Validator.registerImplicit = function (name, fn, message) {
  * @param  {string}   message
  * @return {void}
  */
-Validator.registerAsync = function (name, fn, message) {
+Validator.registerAsync = function (name, fn, message, fnReplacement) {
   var lang = Validator.getDefaultLang();
   Rules.registerAsync(name, fn);
   Lang._setRuleMessage(lang, name, message);

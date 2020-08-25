@@ -392,6 +392,26 @@ Validator.register('telephone', function(value, requirement, attribute) { // req
 }, 'The :attribute phone number is not in the format XXX-XXX-XXXX.');
 ```
 
+### Custom attributes for custom rules
+
+In addition to custom rules, you can also create custom attributes for these rules as follows
+
+```js
+Validator.register(
+    'date_between',
+    function (value, requirement) {
+      // custom validation using dates
+    },
+    'Custom message for attribute :attribute with replacements :min and :max.',
+    function (_template, rule, _getAttributeName) {
+      const parameters = rule.getParameters();
+        return {
+          min: parameters[0],
+          max: parameters[1],
+        };
+    }
+```
+
 ### Asynchronous Validation
 
 Register an asynchronous rule which accepts a `passes` callback:

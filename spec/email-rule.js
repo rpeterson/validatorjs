@@ -1,6 +1,6 @@
 const { Validator, expect } = require("./setup.js");
 
-describe.only("email validation rule", function() {
+describe("email validation rule", function() {
   it("should pass with the email address: johndoe@gmail.com", function() {
     const validator = new Validator({ email: "johndoe@gmail.com" }, { email: "email" });
     expect(validator.passes()).to.be.true;

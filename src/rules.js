@@ -158,7 +158,7 @@ var rules = {
   /**
    * Compares the size of strings or the value of numbers if there is a truthy value
    */
-  min: function(val, req, attribute) {
+  min: function (val, req, attribute) {
     var size = this.getSize();
     return size >= req;
   },
@@ -200,7 +200,7 @@ var rules = {
     }
   },
 
-  array: function(val) {
+  array: function (val) {
     return val instanceof Array;
   },
 
