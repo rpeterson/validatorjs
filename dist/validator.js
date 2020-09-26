@@ -1,503 +1,5 @@
-/*! validatorjs - 2020-08-25 */
+/*! validatorjs - 2020-09-26 */
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.Validator = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = getTimezoneOffsetInMilliseconds;
-var MILLISECONDS_IN_MINUTE = 60000;
-/**
- * Google Chrome as of 67.0.3396.87 introduced timezones with offset that includes seconds.
- * They usually appear for dates that denote time before the timezones were introduced
- * (e.g. for 'Europe/Prague' timezone the offset is GMT+00:57:44 before 1 October 1891
- * and GMT+01:00:00 after that date)
- *
- * Date#getTimezoneOffset returns the offset in minutes and would return 57 for the example above,
- * which would lead to incorrect calculations.
- *
- * This function returns the timezone offset in milliseconds that takes seconds in account.
- */
-
-function getTimezoneOffsetInMilliseconds(dirtyDate) {
-  var date = new Date(dirtyDate.getTime());
-  var baseTimezoneOffset = date.getTimezoneOffset();
-  date.setSeconds(0, 0);
-  var millisecondsPartOfTimezoneOffset = date.getTime() % MILLISECONDS_IN_MINUTE;
-  return baseTimezoneOffset * MILLISECONDS_IN_MINUTE + millisecondsPartOfTimezoneOffset;
-}
-
-module.exports = exports.default;
-},{}],2:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = toInteger;
-
-function toInteger(dirtyNumber) {
-  if (dirtyNumber === null || dirtyNumber === true || dirtyNumber === false) {
-    return NaN;
-  }
-
-  var number = Number(dirtyNumber);
-
-  if (isNaN(number)) {
-    return number;
-  }
-
-  return number < 0 ? Math.ceil(number) : Math.floor(number);
-}
-
-module.exports = exports.default;
-},{}],3:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = isValid;
-
-var _index = _interopRequireDefault(require("../toDate/index.js"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-/**
- * @name isValid
- * @category Common Helpers
- * @summary Is the given date valid?
- *
- * @description
- * Returns false if argument is Invalid Date and true otherwise.
- * Argument is converted to Date using `toDate`. See [toDate]{@link https://date-fns.org/docs/toDate}
- * Invalid Date is a Date, whose time value is NaN.
- *
- * Time value of Date: http://es5.github.io/#x15.9.1.1
- *
- * ### v2.0.0 breaking changes:
- *
- * - [Changes that are common for the whole library](https://github.com/date-fns/date-fns/blob/master/docs/upgradeGuide.md#Common-Changes).
- *
- * - Now `isValid` doesn't throw an exception
- *   if the first argument is not an instance of Date.
- *   Instead, argument is converted beforehand using `toDate`.
- *
- *   Examples:
- *
- *   | `isValid` argument        | Before v2.0.0 | v2.0.0 onward |
- *   |---------------------------|---------------|---------------|
- *   | `new Date()`              | `true`        | `true`        |
- *   | `new Date('2016-01-01')`  | `true`        | `true`        |
- *   | `new Date('')`            | `false`       | `false`       |
- *   | `new Date(1488370835081)` | `true`        | `true`        |
- *   | `new Date(NaN)`           | `false`       | `false`       |
- *   | `'2016-01-01'`            | `TypeError`   | `true`        |
- *   | `''`                      | `TypeError`   | `false`       |
- *   | `1488370835081`           | `TypeError`   | `true`        |
- *   | `NaN`                     | `TypeError`   | `false`       |
- *
- *   We introduce this change to make *date-fns* consistent with ECMAScript behavior
- *   that try to coerce arguments to the expected type
- *   (which is also the case with other *date-fns* functions).
- *
- * @param {*} date - the date to check
- * @returns {Boolean} the date is valid
- * @throws {TypeError} 1 argument required
- *
- * @example
- * // For the valid date:
- * var result = isValid(new Date(2014, 1, 31))
- * //=> true
- *
- * @example
- * // For the value, convertable into a date:
- * var result = isValid(1393804800000)
- * //=> true
- *
- * @example
- * // For the invalid date:
- * var result = isValid(new Date(''))
- * //=> false
- */
-function isValid(dirtyDate) {
-  if (arguments.length < 1) {
-    throw new TypeError('1 argument required, but only ' + arguments.length + ' present');
-  }
-
-  var date = (0, _index.default)(dirtyDate);
-  return !isNaN(date);
-}
-
-module.exports = exports.default;
-},{"../toDate/index.js":5}],4:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = parseISO;
-
-var _index = _interopRequireDefault(require("../_lib/toInteger/index.js"));
-
-var _index2 = _interopRequireDefault(require("../_lib/getTimezoneOffsetInMilliseconds/index.js"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var MILLISECONDS_IN_HOUR = 3600000;
-var MILLISECONDS_IN_MINUTE = 60000;
-var DEFAULT_ADDITIONAL_DIGITS = 2;
-var patterns = {
-  dateTimeDelimiter: /[T ]/,
-  timeZoneDelimiter: /[Z ]/i,
-  timezone: /([Z+-].*)$/
-};
-var dateRegex = /^-?(?:(\d{3})|(\d{2})(?:-?(\d{2}))?|W(\d{2})(?:-?(\d{1}))?|)$/;
-var timeRegex = /^(\d{2}(?:[.,]\d*)?)(?::?(\d{2}(?:[.,]\d*)?))?(?::?(\d{2}(?:[.,]\d*)?))?$/;
-var timezoneRegex = /^([+-])(\d{2})(?::?(\d{2}))?$/;
-/**
- * @name parseISO
- * @category Common Helpers
- * @summary Parse ISO string
- *
- * @description
- * Parse the given string in ISO 8601 format and return an instance of Date.
- *
- * Function accepts complete ISO 8601 formats as well as partial implementations.
- * ISO 8601: http://en.wikipedia.org/wiki/ISO_8601
- *
- * If the argument isn't a string, the function cannot parse the string or
- * the values are invalid, it returns Invalid Date.
- *
- * ### v2.0.0 breaking changes:
- *
- * - [Changes that are common for the whole library](https://github.com/date-fns/date-fns/blob/master/docs/upgradeGuide.md#Common-Changes).
- *
- * - The previous `parse` implementation was renamed to `parseISO`.
- *
- *   ```javascript
- *   // Before v2.0.0
- *   parse('2016-01-01')
- *
- *   // v2.0.0 onward
- *   parseISO('2016-01-01')
- *   ```
- *
- * - `parseISO` now validates separate date and time values in ISO-8601 strings
- *   and returns `Invalid Date` if the date is invalid.
- *
- *   ```javascript
- *   parseISO('2018-13-32')
- *   //=> Invalid Date
- *   ```
- *
- * - `parseISO` now doesn't fall back to `new Date` constructor
- *   if it fails to parse a string argument. Instead, it returns `Invalid Date`.
- *
- * @param {String} argument - the value to convert
- * @param {Object} [options] - an object with options.
- * @param {0|1|2} [options.additionalDigits=2] - the additional number of digits in the extended year format
- * @returns {Date} the parsed date in the local time zone
- * @throws {TypeError} 1 argument required
- * @throws {RangeError} `options.additionalDigits` must be 0, 1 or 2
- *
- * @example
- * // Convert string '2014-02-11T11:30:30' to date:
- * var result = parseISO('2014-02-11T11:30:30')
- * //=> Tue Feb 11 2014 11:30:30
- *
- * @example
- * // Convert string '+02014101' to date,
- * // if the additional number of digits in the extended year format is 1:
- * var result = parseISO('+02014101', { additionalDigits: 1 })
- * //=> Fri Apr 11 2014 00:00:00
- */
-
-function parseISO(argument, dirtyOptions) {
-  if (arguments.length < 1) {
-    throw new TypeError('1 argument required, but only ' + arguments.length + ' present');
-  }
-
-  var options = dirtyOptions || {};
-  var additionalDigits = options.additionalDigits == null ? DEFAULT_ADDITIONAL_DIGITS : (0, _index.default)(options.additionalDigits);
-
-  if (additionalDigits !== 2 && additionalDigits !== 1 && additionalDigits !== 0) {
-    throw new RangeError('additionalDigits must be 0, 1 or 2');
-  }
-
-  if (!(typeof argument === 'string' || Object.prototype.toString.call(argument) === '[object String]')) {
-    return new Date(NaN);
-  }
-
-  var dateStrings = splitDateString(argument);
-  var date;
-
-  if (dateStrings.date) {
-    var parseYearResult = parseYear(dateStrings.date, additionalDigits);
-    date = parseDate(parseYearResult.restDateString, parseYearResult.year);
-  }
-
-  if (isNaN(date) || !date) {
-    return new Date(NaN);
-  }
-
-  var timestamp = date.getTime();
-  var time = 0;
-  var offset;
-
-  if (dateStrings.time) {
-    time = parseTime(dateStrings.time);
-
-    if (isNaN(time) || time === null) {
-      return new Date(NaN);
-    }
-  }
-
-  if (dateStrings.timezone) {
-    offset = parseTimezone(dateStrings.timezone);
-
-    if (isNaN(offset)) {
-      return new Date(NaN);
-    }
-  } else {
-    var fullTime = timestamp + time;
-    var fullTimeDate = new Date(fullTime);
-    offset = (0, _index2.default)(fullTimeDate); // Adjust time when it's coming from DST
-
-    var fullTimeDateNextDay = new Date(fullTime);
-    fullTimeDateNextDay.setDate(fullTimeDate.getDate() + 1);
-    var offsetDiff = (0, _index2.default)(fullTimeDateNextDay) - offset;
-
-    if (offsetDiff > 0) {
-      offset += offsetDiff;
-    }
-  }
-
-  return new Date(timestamp + time + offset);
-}
-
-function splitDateString(dateString) {
-  var dateStrings = {};
-  var array = dateString.split(patterns.dateTimeDelimiter);
-  var timeString;
-
-  if (/:/.test(array[0])) {
-    dateStrings.date = null;
-    timeString = array[0];
-  } else {
-    dateStrings.date = array[0];
-    timeString = array[1];
-
-    if (patterns.timeZoneDelimiter.test(dateStrings.date)) {
-      dateStrings.date = dateString.split(patterns.timeZoneDelimiter)[0];
-      timeString = dateString.substr(dateStrings.date.length, dateString.length);
-    }
-  }
-
-  if (timeString) {
-    var token = patterns.timezone.exec(timeString);
-
-    if (token) {
-      dateStrings.time = timeString.replace(token[1], '');
-      dateStrings.timezone = token[1];
-    } else {
-      dateStrings.time = timeString;
-    }
-  }
-
-  return dateStrings;
-}
-
-function parseYear(dateString, additionalDigits) {
-  var regex = new RegExp('^(?:(\\d{4}|[+-]\\d{' + (4 + additionalDigits) + '})|(\\d{2}|[+-]\\d{' + (2 + additionalDigits) + '})$)');
-  var captures = dateString.match(regex); // Invalid ISO-formatted year
-
-  if (!captures) return {
-    year: null
-  };
-  var year = captures[1] && parseInt(captures[1]);
-  var century = captures[2] && parseInt(captures[2]);
-  return {
-    year: century == null ? year : century * 100,
-    restDateString: dateString.slice((captures[1] || captures[2]).length)
-  };
-}
-
-function parseDate(dateString, year) {
-  // Invalid ISO-formatted year
-  if (year === null) return null;
-  var captures = dateString.match(dateRegex); // Invalid ISO-formatted string
-
-  if (!captures) return null;
-  var isWeekDate = !!captures[4];
-  var dayOfYear = parseDateUnit(captures[1]);
-  var month = parseDateUnit(captures[2]) - 1;
-  var day = parseDateUnit(captures[3]);
-  var week = parseDateUnit(captures[4]);
-  var dayOfWeek = parseDateUnit(captures[5]) - 1;
-
-  if (isWeekDate) {
-    if (!validateWeekDate(year, week, dayOfWeek)) {
-      return new Date(NaN);
-    }
-
-    return dayOfISOWeekYear(year, week, dayOfWeek);
-  } else {
-    var date = new Date(0);
-
-    if (!validateDate(year, month, day) || !validateDayOfYearDate(year, dayOfYear)) {
-      return new Date(NaN);
-    }
-
-    date.setUTCFullYear(year, month, Math.max(dayOfYear, day));
-    return date;
-  }
-}
-
-function parseDateUnit(value) {
-  return value ? parseInt(value) : 1;
-}
-
-function parseTime(timeString) {
-  var captures = timeString.match(timeRegex);
-  if (!captures) return null; // Invalid ISO-formatted time
-
-  var hours = parseTimeUnit(captures[1]);
-  var minutes = parseTimeUnit(captures[2]);
-  var seconds = parseTimeUnit(captures[3]);
-
-  if (!validateTime(hours, minutes, seconds)) {
-    return NaN;
-  }
-
-  return hours * MILLISECONDS_IN_HOUR + minutes * MILLISECONDS_IN_MINUTE + seconds * 1000;
-}
-
-function parseTimeUnit(value) {
-  return value && parseFloat(value.replace(',', '.')) || 0;
-}
-
-function parseTimezone(timezoneString) {
-  if (timezoneString === 'Z') return 0;
-  var captures = timezoneString.match(timezoneRegex);
-  if (!captures) return 0;
-  var sign = captures[1] === '+' ? -1 : 1;
-  var hours = parseInt(captures[2]);
-  var minutes = captures[3] && parseInt(captures[3]) || 0;
-
-  if (!validateTimezone(hours, minutes)) {
-    return NaN;
-  }
-
-  return sign * (hours * MILLISECONDS_IN_HOUR + minutes * MILLISECONDS_IN_MINUTE);
-}
-
-function dayOfISOWeekYear(isoWeekYear, week, day) {
-  var date = new Date(0);
-  date.setUTCFullYear(isoWeekYear, 0, 4);
-  var fourthOfJanuaryDay = date.getUTCDay() || 7;
-  var diff = (week - 1) * 7 + day + 1 - fourthOfJanuaryDay;
-  date.setUTCDate(date.getUTCDate() + diff);
-  return date;
-} // Validation functions
-// February is null to handle the leap year (using ||)
-
-
-var daysInMonths = [31, null, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-
-function isLeapYearIndex(year) {
-  return year % 400 === 0 || year % 4 === 0 && year % 100;
-}
-
-function validateDate(year, month, date) {
-  return month >= 0 && month <= 11 && date >= 1 && date <= (daysInMonths[month] || (isLeapYearIndex(year) ? 29 : 28));
-}
-
-function validateDayOfYearDate(year, dayOfYear) {
-  return dayOfYear >= 1 && dayOfYear <= (isLeapYearIndex(year) ? 366 : 365);
-}
-
-function validateWeekDate(_year, week, day) {
-  return week >= 1 && week <= 53 && day >= 0 && day <= 6;
-}
-
-function validateTime(hours, minutes, seconds) {
-  if (hours === 24) {
-    return minutes === 0 && seconds === 0;
-  }
-
-  return seconds >= 0 && seconds < 60 && minutes >= 0 && minutes < 60 && hours >= 0 && hours < 25;
-}
-
-function validateTimezone(_hours, minutes) {
-  return minutes >= 0 && minutes <= 59;
-}
-
-module.exports = exports.default;
-},{"../_lib/getTimezoneOffsetInMilliseconds/index.js":1,"../_lib/toInteger/index.js":2}],5:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = toDate;
-
-/**
- * @name toDate
- * @category Common Helpers
- * @summary Convert the given argument to an instance of Date.
- *
- * @description
- * Convert the given argument to an instance of Date.
- *
- * If the argument is an instance of Date, the function returns its clone.
- *
- * If the argument is a number, it is treated as a timestamp.
- *
- * If the argument is none of the above, the function returns Invalid Date.
- *
- * **Note**: *all* Date arguments passed to any *date-fns* function is processed by `toDate`.
- *
- * @param {Date|Number} argument - the value to convert
- * @returns {Date} the parsed date in the local time zone
- * @throws {TypeError} 1 argument required
- *
- * @example
- * // Clone the date:
- * const result = toDate(new Date(2014, 1, 11, 11, 30, 30))
- * //=> Tue Feb 11 2014 11:30:30
- *
- * @example
- * // Convert the timestamp to date:
- * const result = toDate(1392098430000)
- * //=> Tue Feb 11 2014 11:30:30
- */
-function toDate(argument) {
-  if (arguments.length < 1) {
-    throw new TypeError('1 argument required, but only ' + arguments.length + ' present');
-  }
-
-  var argStr = Object.prototype.toString.call(argument); // Clone the date
-
-  if (argument instanceof Date || typeof argument === 'object' && argStr === '[object Date]') {
-    // Prevent the date to lose the milliseconds when passed to new Date() in IE10
-    return new Date(argument.getTime());
-  } else if (typeof argument === 'number' || argStr === '[object Number]') {
-    return new Date(argument);
-  } else {
-    if ((typeof argument === 'string' || argStr === '[object String]') && typeof console !== 'undefined') {
-      // eslint-disable-next-line no-console
-      console.warn("Starting with v2.0.0-beta.1 date-fns doesn't accept strings as arguments. Please use `parseISO` to parse strings. See: https://git.io/fjule"); // eslint-disable-next-line no-console
-
-      console.warn(new Error().stack);
-    }
-
-    return new Date(NaN);
-  }
-}
-
-module.exports = exports.default;
-},{}],6:[function(require,module,exports){
 function AsyncResolvers(onFailedOne, onResolvedAll) {
   this.onResolvedAll = onResolvedAll;
   this.onFailedOne = onFailedOne;
@@ -580,7 +82,7 @@ AsyncResolvers.prototype = {
 
 module.exports = AsyncResolvers;
 
-},{}],7:[function(require,module,exports){
+},{}],2:[function(require,module,exports){
 var replacements = {
 
   /**
@@ -781,7 +283,7 @@ module.exports = {
   formatter: formatter
 };
 
-},{}],8:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 var Errors = function() {
   this.errors = {};
 };
@@ -860,7 +362,7 @@ Errors.prototype = {
 
 module.exports = Errors;
 
-},{}],9:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 var Messages = require('./messages');
 
 require('./lang/en');
@@ -940,7 +442,7 @@ var container = {
 
 module.exports = container;
 
-},{"./lang/en":10,"./messages":11}],10:[function(require,module,exports){
+},{"./lang/en":5,"./messages":6}],5:[function(require,module,exports){
 module.exports = {
   accepted: 'The :attribute must be accepted.',
   after: 'The :attribute must be after :after.',
@@ -990,7 +492,7 @@ module.exports = {
   attributes: {}
 };
 
-},{}],11:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 var Attributes = require('./attributes');
 
 var Messages = function(lang, messages) {
@@ -1144,61 +646,112 @@ Messages.prototype = {
 
 module.exports = Messages;
 
-},{"./attributes":7}],12:[function(require,module,exports){
-var isValid = require("date-fns/isValid");
-var parseISO = require("date-fns/parseISO");
+},{"./attributes":2}],7:[function(require,module,exports){
 
-
+// https://docs.microsoft.com/en-us/office/troubleshoot/excel/determine-a-leap-year
 function leapYear(year) {
   return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
 }
 
-function isValidDate(inDate) {
-  if (inDate instanceof Date) {
-    return !isNaN(inDate);
-  }
+function checkFalsePositiveDates(dateString = '') {
 
-  // reformat if supplied as mm.dd.yyyy (period delimiter)
-  if (typeof inDate === "string") {
-    var pos = inDate.indexOf(".");
-    if (pos > 0 && pos <= 6) {
-      inDate = inDate.replace(/\./g, "-");
+  if (dateString.length === 10) {
+
+    // massage input to use yyyy-mm-dd format
+    // we support yyyy/mm/dd or yyyy.mm.dd
+    let normalizedDate = dateString.replace('.', '-').replace('/', '-');
+    let parts = normalizedDate.split('-');
+    if (parts.length === 3) {
+      if (parts[0].length === 4) {
+        // yyyy-mm-dd format
+        let y = parseInt(parts[0]);
+        let m = parseInt(parts[1]);
+        let d = parseInt(parts[2]);
+        if (m === 2) {
+          // return leapYear(y) ? d <= 29 : d <= 28;
+          if (leapYear(y)) {
+            if (d > 29) {
+              return false;
+            }
+          } else {
+            if (d > 28) {
+              return false;
+            }
+          }
+        }
+        if (m === 4 || m === 6 || m === 9 || m === 11) {
+          if (d > 30) {
+            return false;
+          }
+        }
+      }
+    }
+    return true; // we are not in feburary, proceed
+  }
+  return true; // we are not testing formatted date, proceed to rest of validation
+}
+
+function isValidDate(dateString) {
+  let testDate;
+  if (typeof dateString === 'number') {
+    testDate = new Date(dateString);
+    if (typeof testDate === 'object') {
+      return true;
+    }
+  }
+  // first convert incoming string to date object and see if it correct date and format
+  testDate = new Date(dateString);
+  if (typeof testDate === 'object') {
+    if (testDate.toString() === 'Invalid Date') {
+      return false;
     }
 
-    // if date is mm-dd-yyyy or yyyy-mm-dd
-    if (inDate.length === 10) {
-      return isValid(parseISO(inDate));
+    /**
+     * Check for false positive dates
+     * perform special check on february as JS `new Date` incorrectly returns valid date
+     * Eg.  let newDate = new Date('2020-02-29')  // returns as March 02 2020
+     * Eg.  let newDate = new Date('2019-02-29')  // returns as March 01 2020
+     * Eg.  let newDate = new Date('2019-04-31')  // returns as April 30 2020
+     */
+    if (!checkFalsePositiveDates(dateString)) {
+      return false;
     }
+
+    // valid date object and not a february date
+    return true;
   }
 
-  var testDate = new Date(inDate);
-  var yr = testDate.getFullYear();
-  var mo = testDate.getMonth();
-  var day = testDate.getDate();
+  // First check for the pattern
+  var regex_date = /^\d{4}\-\d{1,2}\-\d{1,2}$/;
 
-  var daysInMonth = [31, leapYear(yr) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-
-  if (yr < 1000) {
-    return false;
-  }
-  if (isNaN(mo)) {
-    return false;
-  }
-  if (mo + 1 > 12) {
-    return false;
-  }
-  if (isNaN(day)) {
-    return false;
-  }
-  if (day > daysInMonth[mo]) {
+  if (!regex_date.test(dateString)) {
     return false;
   }
 
-  return true;
+  // Parse the date parts to integers
+  var parts = dateString.split("-");
+  var day = parseInt(parts[2], 10);
+  var month = parseInt(parts[1], 10);
+  var year = parseInt(parts[0], 10);
+
+  // Check the ranges of month and year
+  if (year < 1000 || year > 3000 || month == 0 || month > 12) {
+    return false;
+  }
+
+  var monthLength = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+  // Adjust for leap years
+  if (year % 400 == 0 || (year % 100 != 0 && year % 4 == 0)) {
+    monthLength[1] = 29;
+  }
+
+  // Check the range of the day
+  return day > 0 && day <= monthLength[month - 1];
 }
 
 var rules = {
-  required: function(val) {
+  required: function (val) {
     var str;
 
     if (val === undefined || val === null) {
@@ -1209,7 +762,7 @@ var rules = {
     return str.length > 0 ? true : false;
   },
 
-  required_if: function(val, req, attribute) {
+  required_if: function (val, req, attribute) {
     req = this.getParameters();
     if (this.validator._objectPath(this.validator.input, req[0]) === req[1]) {
       return this.validator.getRule("required").validate(val);
@@ -1218,7 +771,7 @@ var rules = {
     return true;
   },
 
-  required_unless: function(val, req, attribute) {
+  required_unless: function (val, req, attribute) {
     req = this.getParameters();
     if (this.validator._objectPath(this.validator.input, req[0]) !== req[1]) {
       return this.validator.getRule("required").validate(val);
@@ -1227,7 +780,7 @@ var rules = {
     return true;
   },
 
-  required_with: function(val, req, attribute) {
+  required_with: function (val, req, attribute) {
     if (this.validator._objectPath(this.validator.input, req)) {
       return this.validator.getRule("required").validate(val);
     }
@@ -1235,7 +788,7 @@ var rules = {
     return true;
   },
 
-  required_with_all: function(val, req, attribute) {
+  required_with_all: function (val, req, attribute) {
     req = this.getParameters();
 
     for (var i = 0; i < req.length; i++) {
@@ -1247,7 +800,7 @@ var rules = {
     return this.validator.getRule("required").validate(val);
   },
 
-  required_without: function(val, req, attribute) {
+  required_without: function (val, req, attribute) {
     if (this.validator._objectPath(this.validator.input, req)) {
       return true;
     }
@@ -1255,7 +808,7 @@ var rules = {
     return this.validator.getRule("required").validate(val);
   },
 
-  required_without_all: function(val, req, attribute) {
+  required_without_all: function (val, req, attribute) {
     req = this.getParameters();
 
     for (var i = 0; i < req.length; i++) {
@@ -1267,7 +820,7 @@ var rules = {
     return this.validator.getRule("required").validate(val);
   },
 
-  boolean: function(val) {
+  boolean: function (val) {
     return (
       val === true ||
       val === false ||
@@ -1282,7 +835,7 @@ var rules = {
 
   // compares the size of strings
   // with numbers, compares the value
-  size: function(val, req, attribute) {
+  size: function (val, req, attribute) {
     if (val) {
       req = parseFloat(req);
 
@@ -1294,11 +847,11 @@ var rules = {
     return true;
   },
 
-  string: function(val, req, attribute) {
+  string: function (val, req, attribute) {
     return typeof val === "string";
   },
 
-  sometimes: function(val) {
+  sometimes: function (val) {
     return true;
   },
 
@@ -1313,12 +866,12 @@ var rules = {
   /**
    * Compares the size of strings or the value of numbers if there is a truthy value
    */
-  max: function(val, req, attribute) {
+  max: function (val, req, attribute) {
     var size = this.getSize();
     return size <= req;
   },
 
-  between: function(val, req, attribute) {
+  between: function (val, req, attribute) {
     req = this.getParameters();
     var size = this.getSize();
     var min = parseFloat(req[0], 10);
@@ -1326,7 +879,7 @@ var rules = {
     return size >= min && size <= max;
   },
 
-  email: function(val) {
+  email: function (val) {
     // Added umlaut support https://github.com/skaterdav85/validatorjs/issues/308
     var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     if (!re.test(val)) {
@@ -1335,7 +888,7 @@ var rules = {
     return re.test(val);
   },
 
-  numeric: function(val) {
+  numeric: function (val) {
     var num;
 
     num = Number(val); // tries to convert value to a number. useful if value is coming from form element
@@ -1351,23 +904,23 @@ var rules = {
     return val instanceof Array;
   },
 
-  url: function(url) {
+  url: function (url) {
     return /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-z]{2,63}\b([-a-zA-Z0-9@:%_\+.~#?&/=]*)/i.test(url);
   },
 
-  alpha: function(val) {
+  alpha: function (val) {
     return /^[a-zA-Z]+$/.test(val);
   },
 
-  alpha_dash: function(val) {
+  alpha_dash: function (val) {
     return /^[a-zA-Z0-9_\-]+$/.test(val);
   },
 
-  alpha_num: function(val) {
+  alpha_num: function (val) {
     return /^[a-zA-Z0-9]+$/.test(val);
   },
 
-  same: function(val, req) {
+  same: function (val, req) {
     var val1 = this.validator._flattenObject(this.validator.input)[req];
     var val2 = val;
 
@@ -1378,7 +931,7 @@ var rules = {
     return false;
   },
 
-  different: function(val, req) {
+  different: function (val, req) {
     var val1 = this.validator._flattenObject(this.validator.input)[req];
     var val2 = val;
 
@@ -1389,7 +942,7 @@ var rules = {
     return false;
   },
 
-  in: function(val, req) {
+  in: function (val, req) {
     var list, i;
 
     if (val) {
@@ -1423,7 +976,7 @@ var rules = {
     return true;
   },
 
-  not_in: function(val, req) {
+  not_in: function (val, req) {
     var list = this.getParameters();
     var len = list.length;
     var returnVal = true;
@@ -1444,7 +997,7 @@ var rules = {
     return returnVal;
   },
 
-  accepted: function(val) {
+  accepted: function (val) {
     if (val === "on" || val === "yes" || val === 1 || val === "1" || val === true) {
       return true;
     }
@@ -1452,7 +1005,7 @@ var rules = {
     return false;
   },
 
-  confirmed: function(val, req, key) {
+  confirmed: function (val, req, key) {
     var confirmedKey = key + "_confirmation";
 
     if (this.validator.input[confirmedKey] === val) {
@@ -1462,11 +1015,11 @@ var rules = {
     return false;
   },
 
-  integer: function(val) {
+  integer: function (val) {
     return String(parseInt(val, 10)) === String(val);
   },
 
-  digits: function(val, req) {
+  digits: function (val, req) {
     var numericRule = this.validator.getRule('numeric');
     if (numericRule.validate(val) && String(val.trim()).length === parseInt(req)) {
       return true;
@@ -1475,7 +1028,7 @@ var rules = {
     return false;
   },
 
-  digits_between: function(val) {
+  digits_between: function (val) {
     var numericRule = this.validator.getRule("numeric");
     var req = this.getParameters();
     var valueDigitsCount = String(val).length;
@@ -1489,24 +1042,26 @@ var rules = {
     return false;
   },
 
-  regex: function(val, req) {
+  regex: function (val, req) {
+    let reqPattern = req;
     var mod = /[g|i|m]{1,3}$/;
     var flag = req.match(mod);
     flag = flag ? flag[0] : "";
+
     req = req.replace(mod, "").slice(1, -1);
     req = new RegExp(req, flag);
     return !!req.test(val);
   },
 
-  date: function(val, format) {
+  date: function (val, format) {
     return isValidDate(val);
   },
 
-  present: function(val) {
+  present: function (val) {
     return typeof val !== "undefined";
   },
 
-  after: function(val, req) {
+  after: function (val, req) {
     var val1 = this.validator.input[req];
     var val2 = val;
 
@@ -1524,7 +1079,7 @@ var rules = {
     return false;
   },
 
-  after_or_equal: function(val, req) {
+  after_or_equal: function (val, req) {
     var val1 = this.validator.input[req];
     var val2 = val;
 
@@ -1542,7 +1097,7 @@ var rules = {
     return false;
   },
 
-  before: function(val, req) {
+  before: function (val, req) {
     var val1 = this.validator.input[req];
     var val2 = val;
 
@@ -1560,7 +1115,7 @@ var rules = {
     return false;
   },
 
-  before_or_equal: function(val, req) {
+  before_or_equal: function (val, req) {
     var val1 = this.validator.input[req];
     var val2 = val;
 
@@ -1578,7 +1133,7 @@ var rules = {
     return false;
   },
 
-  hex: function(val) {
+  hex: function (val) {
     return /^[0-9a-f]+$/i.test(val);
   },
 
@@ -1671,7 +1226,7 @@ var rules = {
 
 };
 
-var missedRuleValidator = function() {
+var missedRuleValidator = function () {
   throw new Error("Validator `" + this.name + "` is not defined!");
 };
 var missedRuleMessage;
@@ -1694,12 +1249,12 @@ Rule.prototype = {
    * @param  {function} callback
    * @return {boolean|undefined}
    */
-  validate: function(inputValue, ruleValue, attribute, callback) {
+  validate: function (inputValue, ruleValue, attribute, callback) {
     var _this = this;
     this._setValidatingData(attribute, inputValue, ruleValue);
     if (typeof callback === "function") {
       this.callback = callback;
-      var handleResponse = function(passes, message) {
+      var handleResponse = function (passes, message) {
         _this.response(passes, message);
       };
 
@@ -1721,7 +1276,7 @@ Rule.prototype = {
    * @param  {function} callback
    * @return {boolean|undefined}
    */
-  _apply: function(inputValue, ruleValue, attribute, callback) {
+  _apply: function (inputValue, ruleValue, attribute, callback) {
     var fn = this.isMissed() ? missedRuleValidator : this.fn;
 
     return fn.apply(this, [inputValue, ruleValue, attribute, callback]);
@@ -1735,7 +1290,7 @@ Rule.prototype = {
    * @param {mixed} ruleValue
    * @return {void}
    */
-  _setValidatingData: function(attribute, inputValue, ruleValue) {
+  _setValidatingData: function (attribute, inputValue, ruleValue) {
     this.attribute = attribute;
     this.inputValue = inputValue;
     this.ruleValue = ruleValue;
@@ -1746,7 +1301,7 @@ Rule.prototype = {
    *
    * @return {array}
    */
-  getParameters: function() {
+  getParameters: function () {
     var value = [];
 
     if (typeof this.ruleValue === "string") {
@@ -1769,7 +1324,7 @@ Rule.prototype = {
    *
    * @return {integer|float}
    */
-  getSize: function() {
+  getSize: function () {
     var value = this.inputValue;
 
     if (value instanceof Array) {
@@ -1792,7 +1347,7 @@ Rule.prototype = {
    *
    * @return {string}
    */
-  _getValueType: function() {
+  _getValueType: function () {
     if (typeof this.inputValue === "number" || this.validator._hasNumericRule(this.attribute)) {
       return "numeric";
     }
@@ -1807,7 +1362,7 @@ Rule.prototype = {
    * @param  {string|undefined} message Custom error message
    * @return {void}
    */
-  response: function(passes, message) {
+  response: function (passes, message) {
     this.passes = passes === undefined || passes === true;
     this._customMessage = message;
     this.callback(this.passes, message);
@@ -1819,7 +1374,7 @@ Rule.prototype = {
    * @param {Validator} validator
    * @return {void}
    */
-  setValidator: function(validator) {
+  setValidator: function (validator) {
     this.validator = validator;
   },
 
@@ -1828,7 +1383,7 @@ Rule.prototype = {
    *
    * @return {boolean}
    */
-  isMissed: function() {
+  isMissed: function () {
     return typeof this.fn !== "function";
   },
 
@@ -1869,7 +1424,7 @@ var manager = {
    * @param {Validator}
    * @return {Rule}
    */
-  make: function(name, validator) {
+  make: function (name, validator) {
     var async = this.isAsync(name);
     var rule = new Rule(name, rules[name], async);
     rule.setValidator(validator);
@@ -1882,7 +1437,7 @@ var manager = {
    * @param  {string}  name
    * @return {boolean}
    */
-  isAsync: function(name) {
+  isAsync: function (name) {
     for (var i = 0, len = this.asyncRules.length; i < len; i++) {
       if (this.asyncRules[i] === name) {
         return true;
@@ -1897,7 +1452,7 @@ var manager = {
    * @param {string} name
    * @return {boolean}
    */
-  isImplicit: function(name) {
+  isImplicit: function (name) {
     return this.implicitRules.indexOf(name) > -1;
   },
 
@@ -1908,7 +1463,7 @@ var manager = {
    * @param  {function} fn
    * @return {void}
    */
-  register: function(name, fn) {
+  register: function (name, fn) {
     rules[name] = fn;
   },
 
@@ -1919,7 +1474,7 @@ var manager = {
    * @param  {function} fn
    * @return {void}
    */
-  registerImplicit: function(name, fn) {
+  registerImplicit: function (name, fn) {
     this.register(name, fn);
     this.implicitRules.push(name);
   },
@@ -1931,7 +1486,7 @@ var manager = {
    * @param  {function} fn
    * @return {void}
    */
-  registerAsync: function(name, fn) {
+  registerAsync: function (name, fn) {
     this.register(name, fn);
     this.asyncRules.push(name);
   },
@@ -1943,12 +1498,12 @@ var manager = {
    * @param  {function} fn
    * @return {void}
    */
-  registerAsyncImplicit: function(name, fn) {
+  registerAsyncImplicit: function (name, fn) {
     this.registerImplicit(name, fn);
     this.asyncRules.push(name);
   },
 
-  registerMissedRuleValidator: function(fn, message) {
+  registerMissedRuleValidator: function (fn, message) {
     missedRuleValidator = fn;
     missedRuleMessage = message;
   }
@@ -1956,7 +1511,7 @@ var manager = {
 
 module.exports = manager;
 
-},{"date-fns/isValid":3,"date-fns/parseISO":4}],13:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 var Rules = require('./rules');
 var Lang = require('./lang');
 var Errors = require('./errors');
@@ -2620,5 +2175,5 @@ Validator.registerMissedRuleValidator = function(fn, message) {
 
 module.exports = Validator;
 
-},{"./async":6,"./attributes":7,"./errors":8,"./lang":9,"./rules":12}]},{},[13])(13)
+},{"./async":1,"./attributes":2,"./errors":3,"./lang":4,"./rules":7}]},{},[8])(8)
 });

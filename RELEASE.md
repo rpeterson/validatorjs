@@ -1,5 +1,11 @@
 # validatorjs
 
+[Version 3.20.0] -- 2020.09.26
+
+## Fixed
+
+Fixed issues reporting parseISO and isValid not being imported (refactored code to remove date-fns dependency)
+
 [Version 3.19.1] -- 2020.08.24
 
 ## Fixed

@@ -37,9 +37,7 @@
     "laravel",
     "laravel-validator-for-js"
   ],
-  "dependencies": {
-    "date-fns": "2.1.0"
-  },
+  "dependencies": {},
   "devDependencies": {
     "browserify": "^13.0.1",
     "chai": "3.5.0",

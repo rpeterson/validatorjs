@@ -242,4 +242,35 @@ describe("regex validation rule for most common regular expressions", function()
     );
     expect(validator.passes()).to.be.true;
   });
+
+  it("should be valid password (see rule wihtin test)", function () {
+    // must have at leaset one uppercase
+    // must have at leaset one lowercase
+    // must have at leaset one digit
+    // must have at leaset one special character
+    // must have at least 10 digits
+    const validator = new Validator(
+      { pattern: "SomePass1#" },
+      { pattern: ["regex:/^(?=.{10,}$)(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*\\W).*$/"] }
+    );
+
+    expect(validator.passes()).to.be.true;
+
+    const validator2 = new Validator(
+      { pattern: "SmePass1#" }, // less than 10 digits
+      { pattern: ["regex:/^(?=.{10,}$)(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*\\W).*$/"] }
+    );
+
+    expect(validator2.passes()).to.be.false;
+    expect(validator2.fails()).to.be.true;
+
+  });
+  it("should pass with simple password format w/ escaped back slashes", function () {
+    const validator = new Validator(
+      { pattern: "SomePass1" },
+      { pattern: ["regex:/^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/"] }
+    );
+
+    expect(validator.passes()).to.be.true;
+  });
 });
